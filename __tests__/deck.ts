@@ -50,14 +50,14 @@ describe("Deck behavior", () => {
     const deck = new Deck(cards);
     deck.placeUnder(backCards);
 
-    Array(3).forEach(() => {
+    for (let i = 0; i < 3; i++) {
       const card = deck.deal(Card.FACE_DOWN);
       expect(cards.some((value) => value.equals(card)));
-    });
+    }
 
-    Array(3).forEach(() => {
+    for (let i = 0; i < 3; i++) {
       const card = deck.deal(Card.FACE_DOWN);
       expect(backCards.some((value) => value.equals(card)));
-    });
+    }
   });
 });

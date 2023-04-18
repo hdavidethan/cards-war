@@ -28,6 +28,8 @@ export default class WarGame {
   #player1Deck: Deck;
   #player2Deck: Deck;
 
+  #history: Array<[Array<Card>, Array<Card>]>;
+
   constructor(player1: Player, player2: Player) {
     if (player1.name() === player2.name()) {
       throw new Error("Must start game with 2 unique players");
@@ -37,14 +39,14 @@ export default class WarGame {
     fullDeck.shuffle();
 
     const halfDeckCards: Array<Card> = [];
-    Array(fullDeck.size() / 2).forEach(() =>
-      halfDeckCards.push(fullDeck.deal(Card.FACE_DOWN))
-    );
-
+    for (let i = 0; i < fullDeck.size() / 2; i++) {
+      halfDeckCards.push(fullDeck.deal(Card.FACE_DOWN));
+    }
     this.#player1 = player1;
     this.#player2 = player2;
     this.#player1Deck = fullDeck;
     this.#player2Deck = new Deck(halfDeckCards);
+    this.#history = [];
   }
 
   isGameOver(): boolean {
@@ -130,11 +132,24 @@ export default class WarGame {
       player2Stack[player2Stack.length - 1]
     );
 
-    function claimCards(deck: Deck) {
+    const claimCards = (deck: Deck) => {
+      // Defensive copy
+      this.#history.push([
+        [
+          ...player1Stack.map(
+            (value) => new Card(value.rank(), value.suit(), value.faceUp())
+          ),
+        ],
+        [
+          ...player2Stack.map(
+            (value) => new Card(value.rank(), value.suit(), value.faceUp())
+          ),
+        ],
+      ]);
       const newCards = _.shuffle([...player1Stack, ...player2Stack]);
       newCards.forEach((card) => card.setFaceUp(Card.FACE_DOWN));
       deck.placeUnder(newCards);
-    }
+    };
 
     if (comparison > 0) {
       // Player 1 wins the battle
@@ -159,5 +174,10 @@ export default class WarGame {
     while (!this.#gameOver) {
       this.#runRound();
     }
+  }
+
+  history() {
+    // Defensive copy
+    return JSON.parse(JSON.stringify(this.#history));
   }
 }
