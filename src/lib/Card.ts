@@ -8,9 +8,20 @@ export default class Card {
   #rank: typeof Rank[number];
   #suit: typeof Suit[number];
 
-  constructor(rank: typeof Rank[number], suit: typeof Suit[number]) {
+  static readonly FACE_UP = true;
+  static readonly FACE_DOWN = false;
+
+  #faceUp: boolean;
+
+  constructor(
+    rank: typeof Rank[number],
+    suit: typeof Suit[number],
+    faceUp: boolean = false
+  ) {
     this.#rank = rank;
     this.#suit = suit;
+
+    this.#faceUp = faceUp;
   }
 
   /**
@@ -34,5 +45,20 @@ export default class Card {
    */
   equals(card: Card) {
     return this.#rank === card.rank() && this.#suit === card.suit();
+  }
+
+  /**
+   * Change if the card is face up or face down.
+   * @param faceUp true if the card is face up
+   */
+  setFaceUp(faceUp: boolean) {
+    this.#faceUp = faceUp;
+  }
+
+  /**
+   * Returns true if the card is face up and false if the card is face down.
+   */
+  faceUp() {
+    return this.#faceUp;
   }
 }

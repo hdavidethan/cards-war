@@ -48,12 +48,19 @@ export default class Deck {
 
   /**
    * Returns the next card in the Deck if it is not empty.
+   * @param faceUp true if the card is dealt face up or false if face down
    * @throws Error when the Deck is empty.
    */
-  deal() {
+  deal(faceUp: boolean) {
     if (this.#cards.length === 0) {
       throw new Error("Cannot deal from empty Deck");
     }
-    return this.#cards.pop() as Card; // Assert not undefined since length already checked
+    const card = this.#cards.pop() as Card; // Assert not undefined since length already checked
+    card.setFaceUp(faceUp);
+    return card;
+  }
+
+  placeUnder(cards: Array<Card>) {
+    this.#cards = [...cards, ...this.#cards];
   }
 }
