@@ -1,5 +1,5 @@
 import _ from "lodash";
-import Card from "./Card";
+import Card, { CardJson } from "./Card";
 import Deck from "./Deck";
 import Player from "./Player";
 
@@ -8,15 +8,15 @@ export default class WarGame {
   #winner: Player | null = null;
 
   static readonly RANK_ORDER = [
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
+    "TWO",
+    "THREE",
+    "FOUR",
+    "FIVE",
+    "SIX",
+    "SEVEN",
+    "EIGHT",
+    "NINE",
+    "TEN",
     "J",
     "Q",
     "K",
@@ -28,7 +28,7 @@ export default class WarGame {
   #player1Deck: Deck;
   #player2Deck: Deck;
 
-  #history: Array<[Array<Card>, Array<Card>]>;
+  #history: Array<[Array<CardJson>, Array<CardJson>]>;
 
   constructor(player1: Player, player2: Player) {
     if (player1.name() === player2.name()) {
@@ -136,14 +136,18 @@ export default class WarGame {
       // Defensive copy
       this.#history.push([
         [
-          ...player1Stack.map(
-            (value) => new Card(value.rank(), value.suit(), value.faceUp())
-          ),
+          ...player1Stack.map((value) => ({
+            rank: value.rank(),
+            suit: value.suit(),
+            faceUp: value.faceUp(),
+          })),
         ],
         [
-          ...player2Stack.map(
-            (value) => new Card(value.rank(), value.suit(), value.faceUp())
-          ),
+          ...player2Stack.map((value) => ({
+            rank: value.rank(),
+            suit: value.suit(),
+            faceUp: value.faceUp(),
+          })),
         ],
       ]);
       const newCards = _.shuffle([...player1Stack, ...player2Stack]);
@@ -176,7 +180,7 @@ export default class WarGame {
     }
   }
 
-  history() {
+  history(): Array<[Array<CardJson>, Array<CardJson>]> {
     // Defensive copy
     return JSON.parse(JSON.stringify(this.#history));
   }

@@ -19,9 +19,9 @@ describe("Deck behavior", () => {
 
   it("should have the same cards it was initialized to", () => {
     const cards = [
-      new Card("A", "spade"),
-      new Card("2", "heart"),
-      new Card("10", "club"),
+      new Card("A", "SPADE"),
+      new Card("TWO", "HEART"),
+      new Card("TEN", "CLUB"),
     ];
 
     const deck = new Deck(cards);
@@ -36,15 +36,15 @@ describe("Deck behavior", () => {
 
   it("should place cards at the back of the deck properly", () => {
     const cards = [
-      new Card("A", "spade"),
-      new Card("2", "heart"),
-      new Card("10", "club"),
+      new Card("A", "SPADE"),
+      new Card("TWO", "HEART"),
+      new Card("TEN", "CLUB"),
     ];
 
     const backCards = [
-      new Card("3", "spade"),
-      new Card("4", "heart"),
-      new Card("6", "club"),
+      new Card("THREE", "SPADE"),
+      new Card("FOUR", "HEART"),
+      new Card("SIX", "CLUB"),
     ];
 
     const deck = new Deck(cards);

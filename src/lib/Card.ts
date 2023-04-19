@@ -1,6 +1,12 @@
 import Rank from "./Rank";
 import Suit from "./Suit";
 
+export interface CardJson {
+  rank: typeof Rank[number];
+  suit: typeof Suit[number];
+  faceUp: boolean;
+}
+
 /**
  * An immutable object representing a Card in a deck.
  */

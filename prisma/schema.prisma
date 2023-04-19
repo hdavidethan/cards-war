@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+
+  gameId String? @db.ObjectId
+  Game   Game?   @relation(fields: [gameId], references: [id])
+
+  @@unique([name])
+}
+
+model Game {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  type          GameType
+  players       Player[]
+  playersId     String[]     @db.ObjectId
+  gameOver      Boolean
+  winnerId      String?      @db.ObjectId
+  gameHistory   GameHistory? @relation(fields: [gameHistoryId], references: [id])
+  gameHistoryId String       @db.ObjectId
+
+  @@unique([gameHistoryId])
+}
+
+model GameHistory {
+  id     String        @id @default(auto()) @map("_id") @db.ObjectId
+  game   Game?
+  gameId String?       @db.ObjectId
+  moves  HistoryTurn[]
+}
+
+type HistoryTurn {
+  playerOneMoves Card[]
+  playerTwoMoves Card[]
+}
+
+type Card {
+  rank   Rank
+  suit   Suit
+  faceUp Boolean
+}
+
+enum Rank {
+  A
+  TWO
+  THREE
+  FOUR
+  FIVE
+  SIX
+  SEVEN
+  EIGHT
+  NINE
+  TEN
+  J
+  Q
+  K
+}
+
+enum Suit {
+  SPADE
+  HEART
+  DIAMOND
+  CLUB
+}
+
+enum GameType {
+  WAR
+}

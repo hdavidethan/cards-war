@@ -1,1 +1,1 @@
-export default ["spade", "heart", "diamond", "club"] as const;
+export default ["SPADE", "HEART", "DIAMOND", "CLUB"] as const;
