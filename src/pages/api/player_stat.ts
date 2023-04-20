@@ -18,7 +18,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data | string>
 ) {
-  const { playerName } = req.query as RequestBody;
+  const { playerName } = req.query as unknown as RequestBody;
   if (!playerName) {
     return res.status(400).send("Bad Request");
   }
