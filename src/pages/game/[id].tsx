@@ -3,6 +3,7 @@ import fetcher from "@/lib/fetcher";
 import { CardJson } from "@/lib/game/Card";
 import { Player } from "@prisma/client";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 
@@ -10,10 +11,40 @@ export default function GamePage() {
   const router = useRouter();
   const { id: gameId } = router.query;
 
-  const { data, error } = useSWR(`/api/game/${gameId}`, fetcher);
+  const { data, error, isLoading } = useSWR(`/api/game/${gameId}`, fetcher);
 
   if (error) {
     return <p>Cannot Retrieve Game</p>;
+  }
+
+  if (isLoading) {
+    return <></>;
+  }
+
+  const rankValues = {
+    TWO: 1,
+    THREE: 2,
+    FOUR: 3,
+    FIVE: 4,
+    SIX: 5,
+    SEVEN: 6,
+    EIGHT: 7,
+    NINE: 8,
+    TEN: 9,
+    J: 10,
+    Q: 11,
+    K: 12,
+    A: 13,
+  } as const;
+
+  function getTurnWinnerDirection(
+    rank1: keyof typeof rankValues,
+    rank2: keyof typeof rankValues
+  ) {
+    if (rankValues[rank1] > rankValues[rank2]) {
+      return "←";
+    }
+    return "→";
   }
 
   return (
@@ -25,10 +56,14 @@ export default function GamePage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div className="mx-64 pt-5">
-          <h1 className="text-3xl mb-3">Replaying Game {gameId}</h1>
-          <div className="grid grid-cols-2">
-            <h2 className="text-xl mb-3">
+        <div className="lg:mx-64 md:mx-10 mx-4 pt-5">
+          <p className="mb-4 text-blue-600 hover:text-blue-800">
+            <Link href="/">Return to Home</Link>
+          </p>
+          <h1 className="text-3xl mb-10">Replaying Game {gameId}</h1>
+          <div className="grid grid-cols-12">
+            <div />
+            <h2 className="text-xl mb-3 col-span-5">
               Player 1:{" "}
               {
                 data?.players?.find(
@@ -36,7 +71,8 @@ export default function GamePage() {
                 ).name
               }
             </h2>
-            <h2 className="text-xl mb-3">
+            <div />
+            <h2 className="text-xl mb-3 col-span-5">
               Player 2:{" "}
               {
                 data?.players?.find(
@@ -53,7 +89,8 @@ export default function GamePage() {
                 index: number
               ) => (
                 <>
-                  <div key={`turn-${index}-1`}>
+                  <p className="mt-6">Turn {index + 1}</p>
+                  <div key={`turn-${index}-1`} className="col-span-5">
                     {move.playerOneMoves.map((card, cardIndex) => (
                       <PlayingCard
                         key={`turn-${index}-1-${cardIndex}`}
@@ -63,7 +100,13 @@ export default function GamePage() {
                       />
                     ))}
                   </div>
-                  <div key={`turn-${index}-2`}>
+                  <p className="lg:text-7xl md:text-5xl text-4xl mt-10">
+                    {getTurnWinnerDirection(
+                      move.playerOneMoves[move.playerOneMoves.length - 1].rank,
+                      move.playerTwoMoves[move.playerTwoMoves.length - 1].rank
+                    )}
+                  </p>
+                  <div key={`turn-${index}-2`} className="col-span-5">
                     {move.playerTwoMoves.map((card, cardIndex) => (
                       <PlayingCard
                         key={`turn-${index}-1-${cardIndex}`}
@@ -77,6 +120,7 @@ export default function GamePage() {
               )
             )}
           </div>
+          <p className="my-10 font-bold">Winner: {data.winner.name}</p>
         </div>
       </main>
     </>

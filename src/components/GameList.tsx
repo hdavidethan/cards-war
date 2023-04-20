@@ -1,12 +1,13 @@
 import fetcher from "@/lib/fetcher";
 import { Player } from "@prisma/client";
+import Link from "next/link";
 import useSWR from "swr";
 
 export default function GameList() {
   const { data } = useSWR("/api/game", fetcher);
   console.log(data);
   return (
-    <div className="relative overflow-x-auto mt-5">
+    <div className="relative overflow-x-auto my-5">
       <h2 className="text-xl mb-3">Game History</h2>
       <table className="w-full text-sm text-left text-gray-500">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50">
@@ -32,7 +33,9 @@ export default function GameList() {
           {data?.map((game) => {
             return (
               <tr className="bg-white border-b" key={`game-${game.id}`}>
-                <td className="px-6 py-4">{game.id}</td>
+                <td className="px-6 py-4 underline">
+                  <Link href={`/game/${game.id}`}>{game.id}</Link>
+                </td>
                 <td className="px-6 py-4">
                   {
                     game.players?.find(
