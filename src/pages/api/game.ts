@@ -13,30 +13,36 @@ interface RequestBody {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Game | string>
+  res: NextApiResponse<Game | Game[] | string>
 ) {
-  const { players, gameType } = req.body as RequestBody;
-
-  if (!Array.isArray(players) || players.length !== 2 || !gameType) {
-    return res.status(400).send("Bad Request");
-  }
-
-  if (gameType !== GameType.WAR) {
-    return res.status(501).send("Not Implemented");
-  }
-
-  const playerDocuments = await Promise.all(
-    players.map((player) =>
-      prisma.player.upsert({
-        where: { name: player },
-        create: { name: player },
-        update: {},
-      })
-    )
-  );
-
   switch (req.method) {
+    case "GET":
+      const games = await prisma.game.findMany({
+        include: {
+          gameHistory: true,
+        },
+      });
+      return res.status(200).json(games);
     case "POST":
+      const { players, gameType } = req.body as RequestBody;
+
+      if (!Array.isArray(players) || players.length !== 2 || !gameType) {
+        return res.status(400).send("Bad Request");
+      }
+
+      if (gameType !== GameType.WAR) {
+        return res.status(501).send("Not Implemented");
+      }
+
+      const playerDocuments = await Promise.all(
+        players.map((player) =>
+          prisma.player.upsert({
+            where: { name: player },
+            create: { name: player },
+            update: {},
+          })
+        )
+      );
       const game = new WarGame(new Player(players[0]), new Player(players[1]));
       game.run();
 
