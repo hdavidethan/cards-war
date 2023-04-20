@@ -1,4 +1,5 @@
 import fetcher from "@/lib/fetcher";
+import { Player } from "@prisma/client";
 import useSWR from "swr";
 
 export default function GameList() {
@@ -32,8 +33,20 @@ export default function GameList() {
             return (
               <tr className="bg-white border-b" key={`game-${game.id}`}>
                 <td className="px-6 py-4">{game.id}</td>
-                <td className="px-6 py-4">{game.players?.[0].name}</td>
-                <td className="px-6 py-4">{game.players?.[1].name}</td>
+                <td className="px-6 py-4">
+                  {
+                    game.players?.find(
+                      (player: Player) => player.id === game.playersId?.[0]
+                    ).name
+                  }
+                </td>
+                <td className="px-6 py-4">
+                  {
+                    game.players?.find(
+                      (player: Player) => player.id === game.playersId?.[1]
+                    ).name
+                  }
+                </td>
                 <td className="px-6 py-4">{game.winner?.name}</td>
                 <td className="px-6 py-4">{game.gameHistory?.moves.length}</td>
               </tr>

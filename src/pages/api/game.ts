@@ -60,10 +60,9 @@ export default async function handler(
         data: {
           type: GameType.WAR,
           playersId: playerDocuments.map((player) => player.id),
-          winnerId:
-            playerDocuments.find(
-              (player) => player.name === game.winner().name()
-            )?.id ?? null,
+          winnerId: playerDocuments.find(
+            (player) => player.name === game.winner().name()
+          )?.id,
           gameOver: true,
           gameHistoryId: history.id,
         },
