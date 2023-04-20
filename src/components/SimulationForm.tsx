@@ -1,6 +1,6 @@
 import { GameType } from "@prisma/client";
 import { useState } from "react";
-import { mutate, useSWRConfig } from "swr";
+import { mutate } from "swr";
 
 export default function SimulationForm() {
   const [playerOne, setPlayerOne] = useState("");
