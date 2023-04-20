@@ -12,18 +12,30 @@ interface RequestBody {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Game | Game[] | string>
+  res: NextApiResponse<
+    | Game
+    | Game[]
+    | (Game & { turns: number; winner: Player; players: Player[] })[]
+    | string
+  >
 ) {
   switch (req.method) {
     case "GET":
       const games = await prisma.game.findMany({
         include: {
-          gameHistory: true,
           players: true,
           winner: true,
         },
       });
-      return res.status(200).json(games);
+      const withCounts = await Promise.all(
+        games.map((game) =>
+          prisma.gameHistory
+            .findUnique({ where: { id: game.gameHistoryId } })
+            .then((value) => ({ ...game, turns: value?.moves.length }))
+        )
+      );
+
+      return res.status(200).json(withCounts);
     case "POST":
       const { players, gameType } = JSON.parse(req.body);
 
@@ -56,18 +68,35 @@ export default async function handler(
         },
       });
 
-      const gameDocument = await prisma.game.create({
-        data: {
-          type: GameType.WAR,
-          playersId: playerDocuments.map((player) => player.id),
-          winnerId: playerDocuments.find(
-            (player) => player.name === game.winner().name()
-          )?.id,
-          gameOver: true,
-          gameHistoryId: history.id,
-        },
+      const winner = await prisma.player.findUnique({
+        where: { name: game.winner().name() },
       });
-      res.status(200).json(gameDocument);
+      if (winner === null) {
+        return res.status(500).send("Internal Server Error");
+      }
+
+      try {
+        await prisma.game.create({
+          data: {
+            type: GameType.WAR,
+            players: {
+              connect: playerDocuments.map((player) => ({ id: player.id })),
+            },
+            winner: {
+              connect: {
+                id: winner.id,
+              },
+            },
+            gameOver: true,
+            gameHistory: {
+              connect: { id: history.id },
+            },
+          },
+        });
+      } catch (err) {
+        console.error(err);
+      }
+      res.status(200).send("Success");
       break;
     default:
       res.status(501).send("Not Implemented");

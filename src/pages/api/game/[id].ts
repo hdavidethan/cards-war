@@ -1,8 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import Player from "@/lib/game/Player";
-import WarGame from "@/lib/game/WarGame";
 import prisma from "@/lib/prisma";
-import { Game, GameHistory, GameType } from "@prisma/client";
+import { Game, GameHistory, GameType, Player } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 interface RequestBody {
@@ -35,6 +33,9 @@ export default async function handler(
           winner: true,
         },
       });
+      if (game === null) {
+        return res.status(500).send("Internal Server Error");
+      }
       return res.status(200).json(game);
     default:
       res.status(501).send("Not Implemented");
