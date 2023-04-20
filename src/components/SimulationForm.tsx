@@ -52,7 +52,7 @@ export default function SimulationForm() {
           fetch("/api/game", {
             method: "POST",
             body: JSON.stringify({
-              players: [playerOne, playerTwo],
+              players: [playerTwo, playerOne],
               gameType: GameType.WAR,
             }),
           }).then(() => {
