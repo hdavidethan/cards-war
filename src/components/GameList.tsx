@@ -1,5 +1,5 @@
 import fetcher from "@/lib/fetcher";
-import { Player } from "@prisma/client";
+import { Game, GameHistory, Player } from "@prisma/client";
 import Link from "next/link";
 import useSWR from "swr";
 
@@ -30,31 +30,41 @@ export default function GameList() {
           </tr>
         </thead>
         <tbody>
-          {data?.map((game) => {
-            return (
-              <tr className="bg-white border-b" key={`game-${game.id}`}>
-                <td className="px-6 py-4 underline">
-                  <Link href={`/game/${game.id}`}>{game.id}</Link>
-                </td>
-                <td className="px-6 py-4">
-                  {
-                    game.players?.find(
-                      (player: Player) => player.id === game.playersId?.[0]
-                    ).name
-                  }
-                </td>
-                <td className="px-6 py-4">
-                  {
-                    game.players?.find(
-                      (player: Player) => player.id === game.playersId?.[1]
-                    ).name
-                  }
-                </td>
-                <td className="px-6 py-4">{game.winner?.name}</td>
-                <td className="px-6 py-4">{game.gameHistory?.moves.length}</td>
-              </tr>
-            );
-          })}
+          {data?.map(
+            (
+              game: Game & {
+                gameHistory: GameHistory;
+                players: Player[];
+                winner: Player;
+              }
+            ) => {
+              return (
+                <tr className="bg-white border-b" key={`game-${game.id}`}>
+                  <td className="px-6 py-4 underline">
+                    <Link href={`/game/${game.id}`}>{game.id}</Link>
+                  </td>
+                  <td className="px-6 py-4">
+                    {
+                      game.players?.find(
+                        (player: Player) => player.id === game.playersId?.[0]
+                      )?.name
+                    }
+                  </td>
+                  <td className="px-6 py-4">
+                    {
+                      game.players?.find(
+                        (player: Player) => player.id === game.playersId?.[1]
+                      )?.name
+                    }
+                  </td>
+                  <td className="px-6 py-4">{game.winner?.name}</td>
+                  <td className="px-6 py-4">
+                    {game.gameHistory?.moves.length}
+                  </td>
+                </tr>
+              );
+            }
+          )}
         </tbody>
       </table>
     </div>
