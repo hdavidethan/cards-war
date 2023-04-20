@@ -14,8 +14,11 @@ model Player {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
   name String
 
-  gameId String? @db.ObjectId
-  Game   Game?   @relation(fields: [gameId], references: [id])
+  gameIds String[] @db.ObjectId
+  Game    Game[]   @relation(fields: [gameIds], references: [id], name: "participation")
+
+  wonGameIds String[] @db.ObjectId
+  wonGame    Game[]   @relation(name: "wins")
 
   @@unique([name])
 }
@@ -23,10 +26,11 @@ model Player {
 model Game {
   id            String       @id @default(auto()) @map("_id") @db.ObjectId
   type          GameType
-  players       Player[]
+  players       Player[]     @relation(fields: [playersId], references: [id], name: "participation")
   playersId     String[]     @db.ObjectId
   gameOver      Boolean
-  winnerId      String?      @db.ObjectId
+  winner        Player       @relation(fields: [winnerId], references: [id], name: "wins")
+  winnerId      String       @db.ObjectId
   gameHistory   GameHistory? @relation(fields: [gameHistoryId], references: [id])
   gameHistoryId String       @db.ObjectId
 

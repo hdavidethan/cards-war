@@ -1,10 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import Player from "@/lib/Player";
-import WarGame from "@/lib/WarGame";
-import { Game, GameType, PrismaClient } from "@prisma/client";
+import Player from "@/lib/game/Player";
+import WarGame from "@/lib/game/WarGame";
+import prisma from "@/lib/prisma";
+import { Game, GameType } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
-
-const prisma = new PrismaClient();
 
 interface RequestBody {
   players: string[];
@@ -20,11 +19,13 @@ export default async function handler(
       const games = await prisma.game.findMany({
         include: {
           gameHistory: true,
+          players: true,
+          winner: true,
         },
       });
       return res.status(200).json(games);
     case "POST":
-      const { players, gameType } = req.body as RequestBody;
+      const { players, gameType } = JSON.parse(req.body);
 
       if (!Array.isArray(players) || players.length !== 2 || !gameType) {
         return res.status(400).send("Bad Request");

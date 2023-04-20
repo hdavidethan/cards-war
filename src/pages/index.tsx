@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { Inter } from "next/font/google";
 import SimulationForm from "@/components/SimulationForm";
+import GameList from "@/components/GameList";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +18,7 @@ export default function Home() {
         <div className="mx-64 pt-5">
           <h1 className="text-3xl mb-3">War Card Game Simulator</h1>
           <SimulationForm />
+          <GameList />
         </div>
       </main>
     </>

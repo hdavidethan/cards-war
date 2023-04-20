@@ -1,5 +1,6 @@
 import { GameType } from "@prisma/client";
 import { useState } from "react";
+import { mutate, useSWRConfig } from "swr";
 
 export default function SimulationForm() {
   const [playerOne, setPlayerOne] = useState("");
@@ -48,12 +49,15 @@ export default function SimulationForm() {
             : "bg-slate-500 px-2 py-1 text-white rounded-lg hover:bg-slate-600"
         }
         onClick={() => {
-          const params = new URLSearchParams({
-            gameType: GameType.WAR,
+          fetch("/api/game", {
+            method: "POST",
+            body: JSON.stringify({
+              players: [playerOne, playerTwo],
+              gameType: GameType.WAR,
+            }),
+          }).then(() => {
+            mutate("/api/game");
           });
-          params.append("players", playerOne);
-          params.append("players", playerTwo);
-          void fetch(`/api/game/${params.toString()}`);
         }}
       >
         Run

@@ -1,4 +1,4 @@
-import Card from "@/lib/Card";
+import Card from "@/lib/game/Card";
 import Deck from "@/lib/Deck";
 
 describe("Deck behavior", () => {

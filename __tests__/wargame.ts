@@ -1,4 +1,4 @@
-import Player from "@/lib/Player";
+import Player from "@/lib/game/Player";
 import WarGame from "@/lib/WarGame";
 
 describe("WarGame behavior", () => {

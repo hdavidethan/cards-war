@@ -1,4 +1,4 @@
-import Card from "@/lib/Card";
+import Card from "@/lib/game/Card";
 import Rank from "@/lib/Rank";
 import Suit from "@/lib/Suit";
 
