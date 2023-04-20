@@ -1,7 +1,7 @@
 import PlayingCard from "@/components/PlayingCard";
 import fetcher from "@/lib/fetcher";
 import { CardJson } from "@/lib/game/Card";
-import { Player } from "@prisma/client";
+import { Game, GameHistory, Player } from "@prisma/client";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -11,7 +11,12 @@ export default function GamePage() {
   const router = useRouter();
   const { id: gameId } = router.query;
 
-  const { data, error, isLoading } = useSWR(`/api/game/${gameId}`, fetcher);
+  const { data, error, isLoading } = useSWR(
+    `/api/game/${gameId}`,
+    fetcher<
+      Game & { players: Player[]; gameHistory: GameHistory; winner: Player }
+    >
+  );
 
   if (error) {
     return <p>Cannot Retrieve Game</p>;
@@ -68,7 +73,7 @@ export default function GamePage() {
               {
                 data?.players?.find(
                   (player: Player) => player.id === data.playersId?.[0]
-                ).name
+                )?.name
               }
             </h2>
             <div />
@@ -77,7 +82,7 @@ export default function GamePage() {
               {
                 data?.players?.find(
                   (player: Player) => player.id === data.playersId?.[1]
-                ).name
+                )?.name
               }
             </h2>
             {data?.gameHistory?.moves?.map(
@@ -120,7 +125,7 @@ export default function GamePage() {
               )
             )}
           </div>
-          <p className="my-10 font-bold">Winner: {data.winner.name}</p>
+          <p className="my-10 font-bold">Winner: {data?.winner.name}</p>
         </div>
       </main>
     </>
