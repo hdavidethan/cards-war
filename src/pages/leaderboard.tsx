@@ -1,12 +1,8 @@
+import LeaderboardTable from "@/components/LeaderboardTable";
 import Head from "next/head";
-import { Inter } from "next/font/google";
-import SimulationForm from "@/components/SimulationForm";
-import GameList from "@/components/GameList";
 import Link from "next/link";
 
-const inter = Inter({ subsets: ["latin"] });
-
-export default function Home() {
+export default function LeaderboardPage() {
   return (
     <>
       <Head>
@@ -17,12 +13,10 @@ export default function Home() {
       </Head>
       <main>
         <div className="mx-64 pt-5">
-          <h1 className="text-3xl mb-3">War Card Game Simulator</h1>
           <p className="mb-4 text-blue-600 hover:text-blue-800">
-            <Link href="/leaderboard">Leaderboard</Link>
+            <Link href="/">Return to Home</Link>
           </p>
-          <SimulationForm />
-          <GameList />
+          <LeaderboardTable />
         </div>
       </main>
     </>
