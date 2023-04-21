@@ -44,6 +44,7 @@ the same actions on an HTTP request directly.
 
 `POST /api/game`
 This creates a new game and simulates it.
+
 Request Body
 
 - players: [string, string] - The names of the two players
@@ -56,10 +57,14 @@ This retrieves the basic information about every game.
 `GET /api/game/[id]`
 This retrieves the information about a specific game as well as it's turn-by-turn history
 
+Path Params
+
 - id: The ID of the game
 
 `GET /api/player_stat`
 This retrieves the win and loss stats for a given player or all players
+
+Query Params
 
 - playerName: The name of the player. If this is not defined, all player stats are returned instead
 
