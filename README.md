@@ -12,6 +12,7 @@ npm install
 ```
 
 Then, create a .env file from .env.example to fill in the values.
+The Database URL in the example file has access to the db.
 
 Set the `OUTPUT` env variable to "export"
 
@@ -22,8 +23,9 @@ npm run dev
 ### 2. Docker
 
 Create a .env file from .env.example to fill in the values.
+The Database URL in the example file has access to the db.
 
-Set the `OUTPUT` env variable to "standalone"
+Comment out the `OUTPUT` variable in the .env file
 
 ```
 docker build -t cards-war .
