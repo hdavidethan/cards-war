@@ -73,7 +73,6 @@ const allStatsPipeline = [
        *   include or exclude.
        */
       {
-        _id: 0,
         winner: 0,
       },
   },
@@ -100,30 +99,38 @@ export default async function handler(
       return res.status(404).send("Player Not Found");
     }
 
-    const winningGames = await prisma.game.findMany({
-      where: { winnerId: playerDocument.id },
+    const games = await prisma.game.count({
+      where: { playersId: { has: playerDocument.id } },
     });
 
-    const totalGames = await prisma.game.count({});
+    const winningGames = await prisma.game.count({
+      where: { winnerId: playerDocument.id },
+    });
     res.status(200).json([
       {
         name: playerDocument.name,
-        wins: winningGames.length,
-        losses: totalGames - winningGames.length,
+        wins: winningGames,
+        losses: games - winningGames,
       },
     ]);
   } else {
-    const totalGames = await prisma.game.count({});
     const winners = await prisma.game.aggregateRaw({
       pipeline: allStatsPipeline,
     });
-    const result = Object(winners).map(
-      (winner: { name: string; wins: number }) => ({
-        ...winner,
-        losses: totalGames - winner.wins,
-      })
+    const lossesPromises = Object(winners).map(
+      (winner: { name: string; wins: number; _id: { $oid: string } }) =>
+        prisma.game
+          .count({
+            where: {
+              playersId: { has: winner["_id"]["$oid"] },
+            },
+          })
+          .then((count) => ({
+            name: winner.name,
+            wins: winner.wins,
+            losses: count - winner.wins,
+          }))
     );
-
-    res.status(200).json(result);
+    res.status(200).json(await Promise.all(lossesPromises));
   }
 }
